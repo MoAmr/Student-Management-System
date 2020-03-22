@@ -1,4 +1,7 @@
 package com.student.dal.repos;
 
-public interface LocationRepository {
+import com.student.dal.entities.Location;
+import org.springframework.data.repository.CrudRepository;
+
+public interface LocationRepository extends CrudRepository<Location, Integer> {
 }

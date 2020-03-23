@@ -1,8 +1,10 @@
 package com.student.dal.controllers;
 
 import com.student.dal.entities.Location;
+import com.student.dal.repos.LocationRepository;
 import com.student.dal.services.LocationService;
 import com.student.dal.utils.EmailUtil;
+import com.student.dal.utils.ReportUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.ServletContext;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,7 +23,16 @@ public class LocationController {
     LocationService locationService;
 
     @Autowired
+    LocationRepository locationRepo;
+
+    @Autowired
     EmailUtil emailUtil;
+
+    @Autowired
+    ReportUtil reportUtil;
+
+    @Autowired
+    ServletContext sc;
 
     @RequestMapping("/showCreate")
     public String showCreate() {
@@ -77,5 +89,13 @@ public class LocationController {
         List<Location> locations = locationService.getAllLocations();
         modelMap.addAttribute("locations", locations);
         return "displayLocations";
+    }
+
+    @RequestMapping("/generateReport")
+    public String generateReport() {
+        String path = sc.getRealPath("/");
+        List<Object[]> data = locationRepo.findTypeAndTypeCount();
+        reportUtil.generatePieChart(path, data);
+        return "report";
     }
 }
